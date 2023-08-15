@@ -38,11 +38,11 @@ async def main():
     keywords = rake.extract_phrases(trans_text)
     # keywords.append("水彩画") # 水彩画仕様に変更
     keywords = " ".join(keywords)
-    print(keywords)
+    # print(keywords)
 
     # キーワードから画像を生成
     Image_URL = create_image_from_text(keywords)
-    print(Image_URL)
+    urls = [item["url"] for item in Image_URL]
 
     # 要約した文章を返すかテスト
     # return summary_text
@@ -54,7 +54,7 @@ async def main():
     # return keywords
 
     # 画像のリンクを返すかテスト
-    return Image_URL
+    return urls
 
 def contains_japanese(text):
     # 正規表現で日本語の文字を検索

@@ -10,7 +10,8 @@ def create_image_from_text(text):
         n = 4, # 1~10で生成する画像数を決定
         size = "1024x1024" # 画像サイズの設定 256×256 or 512×512 or 1024×1024
     )
-    Image_url = response['data'][0]['url']
+    # print(response)
+    Image_url = response['data']
 
     # URLのリストを返す
     return Image_url
