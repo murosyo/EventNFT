@@ -1,9 +1,7 @@
-import './App.css';
-
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
 import { Footer, Header } from './components';
-
 import {
   CollectComment,
   Comment,
@@ -15,11 +13,12 @@ import {
   Top
 } from './pages';
 
+
 function App() {
   return (
-    <div className="App">
+    <div className="App flex flex-col min-h-screen">
       <Header />
-      <div className='my-10 min-h-screen'>
+      <div className='my-10 flex-grow'>
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<Top />} />

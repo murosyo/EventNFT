@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 const NewUser = () => {
   const [user, setUser] = useState({
     username: '',
