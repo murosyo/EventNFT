@@ -10,11 +10,10 @@ from summerize import summerize
 
 app = FastAPI()
 
-
 class Event(BaseModel):
-    title: Union[str, None] = None
-    location: Union[str, None] = None
-    detail: Union[str, None] = None
+    title: str = None
+    location: str = None
+    detail: str = None
 
 
 class Data(BaseModel):
@@ -31,7 +30,23 @@ async def root(data: Data):
     # all_text = f.read()
     # f.close()
 
+    # print(data)
+
     all_text = data.comments
+    event_title = data.event.title
+    event_location = data.event.location
+    event_detail = data.event.detail
+    event_keywords = data.keywords
+    # print(all_text)
+    # print(event_title)
+    # print(event_location)
+    # print(event_detail)
+    # print(event_keywords)
+    # print(type(event_title))
+    # print(type(event_location))
+    # print(type(event_detail))
+    # print(type(event_keywords))
+    # print(len(event_keywords))
 
     # summerize APIが日本語の要約できないみたいなので、日本語文なら一旦英語に翻訳
     IsJapanese = contains_japanese(all_text)
@@ -58,15 +73,20 @@ async def root(data: Data):
     #     if data.keywords[i] != None:
     #         keywords.append(data.keywords[i])
     # keywords.append(data.keywords)
-    for i in len(data.keywords):
-        keywords.append(data.keywords[i])
+    for i in range(len(event_keywords)):
+        keywords.append(event_keywords[i])
+    keywords.append(event_location)
+    keywords = " ".join(keywords)
+    keywords = keywords.split()
+    keywords = set(keywords)
+    keywords = list(keywords)
     keywords = " ".join(keywords)
     # print(keywords)
 
     # キーワードから画像を生成
     Image_URL = create_image_from_text(keywords)
     urls = [item["url"] for item in Image_URL]
-
+    # print(urls)
     # 要約した文章を返すかテスト
     # return summary_text
 
