@@ -2,23 +2,17 @@ import pandas as pd
 import neologdn
 import re
 import string
-from statistics import StatisticsError
 from tqdm import tqdm
 
-import textacy
-from textacy.extract.keyterms import yake, sgrank, textrank, scake
 from rake_ja import Tokenizer, JapaneseRake
-from pke.unsupervised import MultipartiteRank, PositionRank, TopicRank
-
 
 class KeywordExtractor:
     def __init__(
         self,
-        data: pd.DataFrame,
+        data: string,
     ) -> None:
 
         self.data = data
-        self.data = self.data.fillna("")
 
     # 前処理
     def _preprocess(self, x: str) -> str:
@@ -37,26 +31,26 @@ class KeywordExtractor:
         x = re.sub(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", "", x)
         x = re.sub(r"[!-/:-@[-`{-~]", r" ", x)
         x = re.sub("[■-♯]", " ", x)
-        x = re.sub(r"(\d)([,.])(\d+)", "\1\3", x)
+        x = re.sub(r"(\d)([,.])(\d+)", r"\1\3", x)
         x = re.sub(r"\d+", "0", x)
         x = re.sub(r"・", ", ", x)
         x = re.sub(r"[\(\)「」【】]", "", x)
 
         return x
 
-    def extract_phrases(self, data: pd.Series) -> tuple[list[float], list[str]]:
+    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
         raise NotImplementedError
 
     def apply_keywords_extract(self) -> pd.DataFrame:
         tqdm.pandas()
-        self.data[["scores", "keywords"]] = self.data.progress_apply(
-            self.extract_phrases, axis=1, result_type="expand"
+        self.data[["scores", "keywords"]] = self.data["text"].progress_apply(
+            self.extract_phrases, result_type="expand"
         )
 
         return self.data
 
 class Rake(KeywordExtractor):
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data: string):
         super().__init__(data)
 
         self.tokenizer = Tokenizer()
@@ -66,19 +60,20 @@ class Rake(KeywordExtractor):
             + "により 以外 それほど ある 未だ さ れ および として といった られ この ため こ たち ・ ご覧".split()
         )
         self.rake = JapaneseRake(
-            max_length=3,
+            max_length = 5, # 関連させる単語の最大数
+            min_length = 2, # 関連させる単語の最小数
             punctuations=self.punctuations,
             stopwords=self.stopwords,
         )
 
-    def extract_phrases(self, data: pd.Series) -> tuple[list[float], list[str]]:
-        tokens = self.tokenizer.tokenize(self._preprocess(data["text"]))
+    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
+        tokens = self.tokenizer.tokenize(self._preprocess(text))
 
         self.rake.extract_keywords_from_text(tokens)
         scrs_kwds = self.rake.get_ranked_phrases_with_scores()
 
-        if len(scrs_kwds) > 0:
-            return [x[0] for x in scrs_kwds], [x[1] for x in scrs_kwds]
+        if len(scrs_kwds) > 1:
+            # 関連スコアが4.0以上の単語群のみを返す
+            return [x[1] for x in scrs_kwds if x[0] >= 4.0]
         else:
             return [], []
-

@@ -2,7 +2,9 @@ import re
 from summerize import summerize
 from deepl import translate_en_to_ja
 from deepl import translate_ja_to_en
-# from Rake import _preprocess
+from Rake import Rake
+from Rake import KeywordExtractor
+from create_image import create_image_from_text
 from fastapi import FastAPI
 app = FastAPI()
 
@@ -26,8 +28,27 @@ async def main():
     trans_text = translate_en_to_ja(summary_text)
     # 改行コード（\n）の除去
     trans_text = re.sub(r'\n', '', trans_text)
+    # print(trans_text)
+
+    # 翻訳したテキストをRakeで処理し、キーワードを抽出
+    rake = Rake(trans_text)
+    keywords = rake.extract_phrases(trans_text)
+    keywords = " ".join(keywords)
+    
+    # キーワードから画像を生成
+    Image_URL = create_image_from_text(keywords)
+
+    # 要約した文章を返すかテスト
     # return summary_text
-    return trans_text
+
+    # 翻訳した文章を返すかテスト
+    # return trans_text
+
+    # キーワードを抽出できているかテスト
+    return keywords
+
+    # 画像のリンクを返すかテスト
+    # return Image_URL
 
 def contains_japanese(text):
     # 正規表現で日本語の文字を検索
