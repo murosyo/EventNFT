@@ -4,17 +4,31 @@ from deepl import translate_en_to_ja
 from deepl import translate_ja_to_en
 from Rake import Rake
 from create_image import create_image_from_text
+from typing import Union, List
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+class Event(BaseModel):
+    title: Union[str, None] = None
+    location: Union[str, None] = None
+    detail: Union[str, None] = None
+
+class Data(BaseModel):
+    event: Event
+    comments: str = None
+    keywords: List[str] = []
 
 app = FastAPI()
 
 @app.get("/")
-async def main():
-    # ファイル読み込み
-    # f = open('test_en.txt', 'r')
-    f = open('test_ja.txt', 'r')
-    all_text = f.read()
-    f.close()
+async def main(data: Data):
+    # # ファイル読み込み
+    # # f = open('test_en.txt', 'r')
+    # f = open('test_ja.txt', 'r')
+    # all_text = f.read()
+    # f.close()
+    
+    all_text = data.comments
 
     # summerize APIが日本語の要約できないみたいなので、日本語文なら一旦英語に翻訳
     IsJapanese = contains_japanese(all_text)
@@ -37,6 +51,12 @@ async def main():
     rake = Rake(trans_text)
     keywords = rake.extract_phrases(trans_text)
     # keywords.append("水彩画") # 水彩画仕様に変更
+    # for i in len(data.keywords):
+    #     if data.keywords[i] != None:
+    #         keywords.append(data.keywords[i])
+    # keywords.append(data.keywords)
+    for i in len(data.keywords):
+        keywords.append(data.keywords[i])
     keywords = " ".join(keywords)
     # print(keywords)
 
