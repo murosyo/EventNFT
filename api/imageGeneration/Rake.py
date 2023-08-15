@@ -1,10 +1,12 @@
-import pandas as pd
-import neologdn
 import re
 import string
+import typing
+
+import neologdn
+import pandas as pd
+from rake_ja import JapaneseRake, Tokenizer
 from tqdm import tqdm
 
-from rake_ja import Tokenizer, JapaneseRake
 
 class KeywordExtractor:
     def __init__(
@@ -38,7 +40,7 @@ class KeywordExtractor:
 
         return x
 
-    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
+    def extract_phrases(self, text: str) -> tuple[typing.List[float], typing.List[str]]:
         raise NotImplementedError
 
     def apply_keywords_extract(self) -> pd.DataFrame:
@@ -48,6 +50,7 @@ class KeywordExtractor:
         )
 
         return self.data
+
 
 class Rake(KeywordExtractor):
     def __init__(self, data: string):
@@ -60,13 +63,13 @@ class Rake(KeywordExtractor):
             + "により 以外 それほど ある 未だ さ れ および として といった られ この ため こ たち ・ ご覧".split()
         )
         self.rake = JapaneseRake(
-            max_length = 5, # 関連させる単語の最大数
-            min_length = 2, # 関連させる単語の最小数
+            max_length=5,  # 関連させる単語の最大数
+            min_length=2,  # 関連させる単語の最小数
             punctuations=self.punctuations,
             stopwords=self.stopwords,
         )
 
-    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
+    def extract_phrases(self, text: str) -> tuple[typing.List[float], typing.List[str]]:
         tokens = self.tokenizer.tokenize(self._preprocess(text))
 
         self.rake.extract_keywords_from_text(tokens)

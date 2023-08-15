@@ -1,33 +1,36 @@
 import re
-from summerize import summerize
-from deepl import translate_en_to_ja
-from deepl import translate_ja_to_en
-from Rake import Rake
+from typing import List, Union
+
 from create_image import create_image_from_text
-from typing import Union, List
+from deepl import translate_en_to_ja, translate_ja_to_en
 from fastapi import FastAPI
 from pydantic import BaseModel
+from Rake import Rake
+from summerize import summerize
+
+app = FastAPI()
+
 
 class Event(BaseModel):
     title: Union[str, None] = None
     location: Union[str, None] = None
     detail: Union[str, None] = None
 
+
 class Data(BaseModel):
     event: Event
     comments: str = None
     keywords: List[str] = []
 
-app = FastAPI()
 
 @app.get("/")
-async def main(data: Data):
+async def root(data: Data):
     # # ファイル読み込み
     # # f = open('test_en.txt', 'r')
     # f = open('test_ja.txt', 'r')
     # all_text = f.read()
     # f.close()
-    
+
     all_text = data.comments
 
     # summerize APIが日本語の要約できないみたいなので、日本語文なら一旦英語に翻訳
@@ -36,7 +39,7 @@ async def main(data: Data):
         all_text = translate_ja_to_en(all_text)
     else:
         all_text = all_text
-    
+
     # 文章の要約
     summary_text = summerize(all_text)
     # print(summary_text)
@@ -76,10 +79,8 @@ async def main(data: Data):
     # 画像のリンクを返すかテスト
     return urls
 
+
 def contains_japanese(text):
     # 正規表現で日本語の文字を検索
     pattern = re.compile(r'[ぁ-んァ-ン一-龥]')
     return bool(pattern.search(text))
-
-if __name__ == "__main__":
-    main()
