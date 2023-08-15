@@ -3,17 +3,19 @@ from summerize import summerize
 from deepl import translate_en_to_ja
 from deepl import translate_ja_to_en
 from Rake import Rake
-from Rake import KeywordExtractor
 from create_image import create_image_from_text
 from fastapi import FastAPI
+
 app = FastAPI()
 
 @app.get("/")
 async def main():
+    # ファイル読み込み
     # f = open('test_en.txt', 'r')
     f = open('test_ja.txt', 'r')
     all_text = f.read()
     f.close()
+
     # summerize APIが日本語の要約できないみたいなので、日本語文なら一旦英語に翻訳
     IsJapanese = contains_japanese(all_text)
     if IsJapanese:
@@ -23,6 +25,7 @@ async def main():
     
     # 文章の要約
     summary_text = summerize(all_text)
+    # print(summary_text)
 
     # 英語から日本語に翻訳
     trans_text = translate_en_to_ja(summary_text)
@@ -33,10 +36,13 @@ async def main():
     # 翻訳したテキストをRakeで処理し、キーワードを抽出
     rake = Rake(trans_text)
     keywords = rake.extract_phrases(trans_text)
+    # keywords.append("水彩画") # 水彩画仕様に変更
     keywords = " ".join(keywords)
-    
+    print(keywords)
+
     # キーワードから画像を生成
     Image_URL = create_image_from_text(keywords)
+    print(Image_URL)
 
     # 要約した文章を返すかテスト
     # return summary_text
@@ -45,10 +51,10 @@ async def main():
     # return trans_text
 
     # キーワードを抽出できているかテスト
-    return keywords
+    # return keywords
 
     # 画像のリンクを返すかテスト
-    # return Image_URL
+    return Image_URL
 
 def contains_japanese(text):
     # 正規表現で日本語の文字を検索
