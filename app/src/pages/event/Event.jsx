@@ -1,34 +1,13 @@
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "./../../config/firebase";
 
+
 const Event = () => {
   const {eventId} = useParams();
-  // const event = events[eventId];
   const [event, setEvent] = useState([]);
-  const comments = [
-    {
-      name: "タロウ",
-      comment: "すごく刺激的な経験でした！短い期間でアイディアを形にするプレッシャーがありましたが、チームメンバーと協力して新しいスキルを学び、素晴らしいプロジェクトを完成させることができて充実感があります。"
-    },
-    {
-      name: "ハナコ",
-      comment: "ハッカソンはアイディアを実現するためのクリエイティブなプレイグラウンドでした。限られた時間内でアプローチを試し、失敗から学び、最終的には成果を出す過程が非常に貴重でした。"
-    },
-    {
-      name: "ユウキ",
-      comment: "初めてのハッカソン参加でしたが、他の参加者とのネットワーキングが広がり、異なるバックグラウンドを持つ人々と協力する楽しさを実感しました。アイディアが形になる瞬間は本当に感動的でした。"
-    },
-    {
-      name: "リカ",
-      comment: "ハッカソンでの数日間は、アイディアの出し合いからデモのプレゼンテーションまで、非常に集中的で充実した時間でした。限られたリソースの中で創造力を発揮することで、自分たちの限界を超えることができました。"
-    },
-    {
-      name: "ケント",
-      comment: "ハッカソンはプレッシャーの中でのチームワークを強化する絶好の機会でした。アイディアを遂行するためにはスムーズなコミュニケーションとタスクの分担が必要で、それが成功への鍵であることを学びました。また、新しいテクノロジーやツールに触れることで、自分のスキルアップにも繋がりました。"
-    }
-  ];
+  const [comments, setComments] = useState([]);
   const eventRef = doc(db, "events", eventId);
 
   useEffect(() => {
@@ -39,18 +18,23 @@ const Event = () => {
         setEvent(event);
       } catch(err) {
         console.log(err);
-      }
-    }
-    // const getCommentList = async () => {
-    //   await axios.get("/commentList?eventId=" + eventId)
-    //     .then((res) => {
-    //       console.log("getCommentList");
-    //       setCommentList(res.data);
-    //     })
-    //     .catch((err) => { console.log(err); });
-    // }
+      };
+    };
+    const getComments = async () => {
+      console.log("GetCommentList", eventId);
+      const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
+      try {
+        const data = await getDocs(commentsRef);
+        const commentList = data.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        setComments(commentList);
+      } catch (err) {
+        console.error(err);
+      };
+    };
     getEvent();
-    // getCommentList();
+    getComments();
   }, []);
 
   return (

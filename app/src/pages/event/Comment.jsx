@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { events } from './../testData';
+import { db } from "./../../config/firebase";
+
 
 const Comment = () => {
   const {eventId} = useParams();
-  const event = events[eventId];
-
+  const [event, setEvent] = useState([]);
   const [comment, setComment] = useState({
     name: '',
     comment: '',
   });
+  const eventRef = doc(db, "events", eventId);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -19,6 +21,19 @@ const Comment = () => {
   const handleSubmit = () => {
     console.log(comment);
   };
+
+  useEffect(() => {
+    const getEvent = async () => {
+      try {
+        const eventDoc = await getDoc(eventRef);
+        const event = eventDoc.data();
+        setEvent(event);
+      } catch(err) {
+        console.log(err);
+      };
+    };
+    getEvent();
+  }, []);
 
   return (
     <div>
