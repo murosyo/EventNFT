@@ -1,9 +1,7 @@
-import './App.css';
-
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
 import { Footer, Header } from './components';
-
 import {
   CollectComment,
   Comment,
@@ -14,6 +12,7 @@ import {
   Test,
   Top
 } from './pages';
+
 
 function App() {
   return (

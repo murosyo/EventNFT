@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const NewEvent = () => {
   const [event, setEvent] = useState({
     title: '',
