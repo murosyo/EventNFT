@@ -1,10 +1,12 @@
-import React from 'react';
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { events } from './../testData';
+import { db } from "./../../config/firebase";
 
 const Event = () => {
   const {eventId} = useParams();
-  const event = events[eventId];
+  // const event = events[eventId];
+  const [event, setEvent] = useState([]);
   const comments = [
     {
       name: "タロウ",
@@ -27,11 +29,36 @@ const Event = () => {
       comment: "ハッカソンはプレッシャーの中でのチームワークを強化する絶好の機会でした。アイディアを遂行するためにはスムーズなコミュニケーションとタスクの分担が必要で、それが成功への鍵であることを学びました。また、新しいテクノロジーやツールに触れることで、自分のスキルアップにも繋がりました。"
     }
   ];
+  const eventRef = doc(db, "events", eventId);
+
+  useEffect(() => {
+    const getEvent = async () => {
+      try {
+        const eventDoc = await getDoc(eventRef);
+        const event = eventDoc.data();
+        setEvent(event);
+      } catch(err) {
+        console.log(err);
+      }
+    }
+    // const getCommentList = async () => {
+    //   await axios.get("/commentList?eventId=" + eventId)
+    //     .then((res) => {
+    //       console.log("getCommentList");
+    //       setCommentList(res.data);
+    //     })
+    //     .catch((err) => { console.log(err); });
+    // }
+    getEvent();
+    // getCommentList();
+  }, []);
 
   return (
     <div className='mx-auto w-5/6 space-y-10'>
       <h1 className='text-xl font-bold'>{event.title}</h1>
-      <img src={event.image} alt="NFT画像" className='mx-auto w-64' />
+      <div className='mx-auto mb-8 w-64 h-64'>
+        <img src={event.image} alt="NFT画像" className='mx-auto w-64 h-64' />
+      </div>
       <div className='text-left space-y-1'>
         <p><strong>日付</strong>：{event.date}</p>
         <p><strong>場所</strong>：{event.location}</p>
