@@ -17,9 +17,9 @@ import {
 
 function App() {
   return (
-    <div className="App">
+    <div className="App flex flex-col min-h-screen">
       <Header />
-      <div className='my-10 min-h-screen'>
+      <div className='my-10 flex-grow'>
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<Top />} />
