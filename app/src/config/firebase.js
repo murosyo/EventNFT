@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
-import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
+  apiKey: "AIzaSyDrJLNNDccaEImO3KNj0AjcS7SBB0WOb8c",
   authDomain: "eventnft-memories.firebaseapp.com",
   projectId: "eventnft-memories",
   storageBucket: "eventnft-memories.appspot.com",
@@ -13,6 +13,3 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-
-const storage = getStorage(app);
-export default storage;
