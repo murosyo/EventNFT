@@ -1,4 +1,3 @@
-import axios from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,25 +16,29 @@ const CollectComment = () => {
     const confirm = window.confirm("コメントを締め切り、画像を生成します。\n本当によろしいですか？");
     if (confirm) {
       createImage();
-    }
-  }
+    };
+  };
 
   const createImage = async () => {
+    var commentList = [];
+    comments.map((obj) => {
+      commentList += obj.comment;
+    })
     const data = {
       "event": event,
-      "comments": comments,
+      "comments": commentList,
       "keywords": [
         "ccc",
         "ddd",
       ] //最大5つ
     };
-    await axios.get("/", data)
-      .then((urls) => {
-        setEvent({...event, status:"generated_image", image: urls[0]});
-        navigate("/event/" + eventId);
-      }).catch((err) => {
-        console.log(err);
-      });
+    // await axios.get("/", data)
+    //   .then((urls) => {
+    //     setEvent({...event, status:"generated_image", image: urls[0]});
+    //     navigate("/event/" + eventId);
+    //   }).catch((err) => {
+    //     console.log(err);
+    //   });
   };
 
   useEffect(() => {

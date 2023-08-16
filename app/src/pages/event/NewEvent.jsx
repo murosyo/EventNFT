@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db } from "../../config/firebase.js";
 
 
 const NewEvent = () => {
@@ -21,9 +23,14 @@ const NewEvent = () => {
     setEvent({ ...event, [name]: value });
   };
 
-  const handleSubmit = () => {
-    console.log(event);
-    navigate("/");
+  const handleSubmit = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "events"), event);
+      console.log("Document written with ID: ", docRef.id);
+      navigate("/event/" + docRef.id + "collectcomment");
+    } catch (err) {
+      console.error("Error adding document: ", err);
+    };
   };
 
   return (
@@ -46,7 +53,7 @@ const NewEvent = () => {
           <p>概要</p>
           <textarea type='textarea' name='details' onChange={handleChange} className='textarea' />
         </div>
-        <button className='mx-auto mt-2 w-full btn' onChange={handleSubmit}>作成</button>
+        <button className='mx-auto mt-2 w-full btn' onClick={handleSubmit}>作成</button>
       </form>
     </div>
   );
