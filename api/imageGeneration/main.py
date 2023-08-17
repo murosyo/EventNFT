@@ -35,8 +35,7 @@ class Data(BaseModel):
     comments: List[str] = []
     keywords: List[str] = []
 
-
-@app.get("/")
+@app.post("/")
 async def root(data: Data):
     # # ファイル読み込み
     # # f = open('test_en.txt', 'r')
