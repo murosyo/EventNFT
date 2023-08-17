@@ -52,9 +52,9 @@ async def root(data: Data):
     # f.close()
 
     # print(data)
-    all_text = "".join(data.comments)
+    event_comments = data.comments
+    all_text = "".join(event_comments)
     all_text = re.sub(r'\n', '', all_text)
-    all_text = data.comments
     event_title = data.event.title
     event_location = data.event.location
     event_detail = data.event.detail
@@ -91,13 +91,14 @@ async def root(data: Data):
     rake = Rake(trans_text)
     keywords = rake.extract_phrases(trans_text)
     # keywords.append("水彩画") # 水彩画仕様に変更
-    # for i in len(data.keywords):
-    #     if data.keywords[i] != None:
-    #         keywords.append(data.keywords[i])
-    # keywords.append(data.keywords)
-    for i in range(len(event_keywords)):
-        keywords.append(event_keywords[i])
+    keywords = [keyword.replace(' ', '') for keyword in keywords]
+    # print(keywords)
+    # print(type(keywords))
+    if len(event_keywords) > 0:
+        for i in range(len(event_keywords)):
+            keywords.append(event_keywords[i])
     keywords.append(event_location)
+    # print(keywords)
     keywords = " ".join(keywords)
     keywords = keywords.split()
     keywords = set(keywords)
