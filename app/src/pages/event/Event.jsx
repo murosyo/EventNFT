@@ -17,7 +17,6 @@ const Event = () => {
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
-        console.log(event);
       } catch(err) {
         console.log(err);
       };
@@ -73,7 +72,6 @@ const Event = () => {
             );
           } else {
             console.error("error");
-            console.log(event);
           }
         })()}
       </div>
