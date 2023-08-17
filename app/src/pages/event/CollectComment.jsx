@@ -10,7 +10,6 @@ const CollectComment = () => {
   const {eventId} = useParams();
   const [event, setEvent] = useState([]);
   const [comments, setComments] = useState([]);
-  const eventRef = doc(db, "events", eventId);
   const QRcode = "https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fevent-nft-memories.vercel.app%2Fevent%2F" + eventId + "%2Fcomment&size=100x100";
   const navigate = useNavigate();
 
@@ -49,6 +48,7 @@ const CollectComment = () => {
     const getEvent = async () => {
       console.log("GetEvent");
       try {
+        const eventRef = doc(db, "events", eventId);
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
@@ -58,8 +58,8 @@ const CollectComment = () => {
     }
     const getComments = async () => {
       console.log("GetCommentList");
-      const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
       try {
+        const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
         const data = await getDocs(commentsRef);
         const commentList = data.docs.map((doc) => ({
           ...doc.data(),
@@ -71,7 +71,7 @@ const CollectComment = () => {
     };
     getEvent();
     getComments();
-  }, []);
+  }, [eventId]);
 
   return (
     <div className='flex flex-col'>

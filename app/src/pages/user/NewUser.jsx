@@ -17,15 +17,14 @@ const NewUser = () => {
     setUser({ ...user, [name]: value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     try {
+      e.preventDefault();
       const docRef = await addDoc(collection(db, "users"), user);
       console.log("Document written with ID: ", docRef.id);
       navigate("/user/" + docRef.id + "/events");
-      return docRef;
     } catch (err) {
       console.error("Error adding document: ", err);
-      return err;
     };
   };
 

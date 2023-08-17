@@ -8,10 +8,11 @@ const Comment = () => {
   const {eventId} = useParams();
   const [event, setEvent] = useState([]);
   const [comment, setComment] = useState({
+    userId: '',
+    eventId: eventId,
     name: '',
     comment: '',
   });
-  const eventRef = doc(db, "events", eventId);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,22 +20,22 @@ const Comment = () => {
     setComment({ ...comment, [name]: value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     try {
+      e.preventDefault();
       const docRef = await addDoc(collection(db, "comments"), comment);
       console.log("Document written with ID: ", docRef.id);
-      navigate("/event/" + docRef.id);
-      return docRef;
+      navigate("/event/" + eventId);
     } catch (err) {
       console.error("Error adding document: ", err);
-      return err;
-    };
+    }
   };
 
   useEffect(() => {
     const getEvent = async () => {
       console.log("GetEvent");
       try {
+        const eventRef = doc(db, "events", eventId);
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
@@ -43,7 +44,7 @@ const Comment = () => {
       };
     };
     getEvent();
-  }, []);
+  }, [eventId]);
 
   return (
     <div>

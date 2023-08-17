@@ -7,31 +7,34 @@ import { db } from "../../config/firebase.js";
 const NewEvent = () => {
   const [event, setEvent] = useState({
     title: '',
-    date: '',
+    'date-start': '',
+    'date-end': '',
     location: '',
     details: '',
     userId: '',
     status: 'collecting_comments',
-    image: 'commingsoon.jpg',
+    image: '/commingsoon.jpg',
   });
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
+    var {name, value} = e.target;
+    if (name === 'date-start' || name === 'date-end') {
+      value = value.replace('T', ' ');
+    }
     console.log(name, value);
     setEvent({ ...event, [name]: value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     try {
+      e.preventDefault();
       const docRef = await addDoc(collection(db, "events"), event);
       console.log("Document written with ID: ", docRef.id);
-      navigate("/event/" + docRef.id + "/collectcomment");
-      return docRef;
+      navigate("/event/" + docRef.id + "/collectcomments");
     } catch (err) {
       console.error("Error adding document: ", err);
-      return err;
     };
   };
 
@@ -44,8 +47,12 @@ const NewEvent = () => {
           <input type='text' name='title' onChange={handleChange} className='input' />
         </div>
         <div>
-          <p>日付</p>
-          <input type='text' name='date' onChange={handleChange} className='input' />
+          <p>開始日時</p>
+          <input type='datetime-local' name='date-start' onChange={handleChange} className='input' />
+        </div>
+        <div>
+          <p>終了日時</p>
+          <input type='datetime-local' name='date-end' onChange={handleChange} className='input' />
         </div>
         <div>
           <p>場所</p>
