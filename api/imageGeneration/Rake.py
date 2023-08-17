@@ -40,7 +40,7 @@ class KeywordExtractor:
 
         return x
 
-    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
+    def extract_phrases(self, text: str):
         raise NotImplementedError
 
     def apply_keywords_extract(self) -> pd.DataFrame:
@@ -69,7 +69,7 @@ class Rake(KeywordExtractor):
             stopwords=self.stopwords,
         )
 
-    def extract_phrases(self, text: str) -> tuple[list[float], list[str]]:
+    def extract_phrases(self, text: str):
         tokens = self.tokenizer.tokenize(self._preprocess(text))
 
         self.rake.extract_keywords_from_text(tokens)

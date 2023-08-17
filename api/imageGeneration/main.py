@@ -1,12 +1,13 @@
 import re
 from typing import List, Union
+
 from create_image import create_image_from_text
 from deepl import translate_en_to_ja, translate_ja_to_en
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Rake import Rake
-from summerize import summerize
 from starlette.middleware.cors import CORSMiddleware
+from summerize import summerize
 
 app = FastAPI()
 
@@ -34,6 +35,12 @@ class Data(BaseModel):
     event: Event
     comments: List[str] = []
     keywords: List[str] = []
+
+
+@app.get("/")
+def test():
+    return "success"
+
 
 @app.post("/")
 async def root(data: Data):
