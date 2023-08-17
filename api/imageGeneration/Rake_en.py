@@ -3,9 +3,9 @@ import string
 import typing
 import neologdn
 import pandas as pd
-from rake_ja import JapaneseRake, Tokenizer
+from rake_nltk import Rake
 from tqdm import tqdm
-
+from nltk.corpus import stopwords
 
 class KeywordExtractor:
     def __init__(
@@ -50,30 +50,22 @@ class KeywordExtractor:
 
         return self.data
 
-
-class Rake(KeywordExtractor):
+class Rake_en(KeywordExtractor):
     def __init__(self, data: string):
         super().__init__(data)
 
-        self.tokenizer = Tokenizer()
-        self.punctuations = string.punctuation + ",.。、"
-        self.stopwords = (
-            "か な において にとって について する これら から と も が は て で に を は し た の ない よう いる という".split()
-            + "により 以外 それほど ある 未だ さ れ および として といった られ この ため こ たち ・ ご覧".split()
-        )
-        self.rake = JapaneseRake(
+        self.rake = Rake(
             max_length=5,  # 関連させる単語の最大数
             min_length=2,  # 関連させる単語の最小数
-            punctuations=self.punctuations,
-            stopwords=self.stopwords,
+            punctuations=string.punctuation,
+            stopwords=stopwords.words("english"),
         )
 
     def extract_phrases(self, text: str):
-        tokens = self.tokenizer.tokenize(self._preprocess(text))
 
-        self.rake.extract_keywords_from_text(tokens)
+        self.rake.extract_keywords_from_text(text)
         scrs_kwds = self.rake.get_ranked_phrases_with_scores()
-
+        print(scrs_kwds)
         if len(scrs_kwds) >= 1:
             # 関連スコアが4.0以上の単語群のみを返す
             return [x[1] for x in scrs_kwds if x[0] >= 4.0]
