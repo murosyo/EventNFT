@@ -61,6 +61,11 @@ const Header = () => {
                 </a>
               </li>
               <li>
+                <a href="/user/0/events" className="py-2 inline-block">
+                  イベント一覧
+                </a>
+              </li>
+              <li>
                 <a href="/event/new" className="py-2 inline-block">
                   イベント作成
                 </a>
@@ -83,6 +88,11 @@ const Header = () => {
               <li>
                 <a href="/event/0" className="py-2 inline-block">
                   集計後
+                </a>
+              </li>
+              <li>
+                <a href="/test" className="py-2 inline-block">
+                  テスト
                 </a>
               </li>
             </ul>

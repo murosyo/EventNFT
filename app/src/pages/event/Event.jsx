@@ -12,6 +12,7 @@ const Event = () => {
 
   useEffect(() => {
     const getEvent = async () => {
+      console.log("GetEvent");
       try {
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
@@ -21,7 +22,7 @@ const Event = () => {
       };
     };
     const getComments = async () => {
-      console.log("GetCommentList", eventId);
+      console.log("GetCommentList");
       const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
       try {
         const data = await getDocs(commentsRef);

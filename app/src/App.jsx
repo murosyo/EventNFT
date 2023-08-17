@@ -6,6 +6,7 @@ import {
   CollectComment,
   Comment,
   Event,
+  EventList,
   Login,
   NewEvent,
   NewUser,
@@ -23,12 +24,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Top />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/user/new" element={<NewUser />} />
+          <Route path="/user/:userId/events" element={<EventList />} />
           <Route path="/event/new" element={<NewEvent />} />
           <Route path="/event/:eventId" element={<Event />} />
           <Route path="/event/:eventId/collectcomments" element={<CollectComment />} />
           <Route path="/event/:eventId/comment" element={<Comment />} />
-          <Route path="/test" element={<Test />} />
         </Routes>
         </BrowserRouter>
       </div>

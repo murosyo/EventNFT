@@ -27,9 +27,11 @@ const NewEvent = () => {
     try {
       const docRef = await addDoc(collection(db, "events"), event);
       console.log("Document written with ID: ", docRef.id);
-      navigate("/event/" + docRef.id + "collectcomment");
+      navigate("/event/" + docRef.id + "/collectcomment");
+      return docRef;
     } catch (err) {
       console.error("Error adding document: ", err);
+      return err;
     };
   };
 

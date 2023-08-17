@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { db } from "../../config/firebase.js";
 
 const NewUser = () => {
   const [user, setUser] = useState({
@@ -8,13 +10,23 @@ const NewUser = () => {
     password: '',
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setUser({ ...user, [name]: value });
   };
 
-  const handleSubmit = () => {
-    console.log(user);
+  const handleSubmit = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "users"), user);
+      console.log("Document written with ID: ", docRef.id);
+      navigate("/user/" + docRef.id + "/events");
+      return docRef;
+    } catch (err) {
+      console.error("Error adding document: ", err);
+      return err;
+    };
   };
 
   return (
@@ -33,7 +45,7 @@ const NewUser = () => {
           <p>パスワード</p>
           <input type='password' name='password' onChange={handleChange} className='input' />
         </div>
-        <button className='mx-auto mt-2 w-full btn' onChange={handleSubmit}>新規登録</button>
+        <button className='mx-auto mt-2 w-full btn' onClick={handleSubmit}>新規登録</button>
       </form>
     </div>
   );
