@@ -1,14 +1,28 @@
 import re
 from typing import List, Union
-
 from create_image import create_image_from_text
 from deepl import translate_en_to_ja, translate_ja_to_en
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Rake import Rake
 from summerize import summerize
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://localhost",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"],
+)
 
 class Event(BaseModel):
     title: str = None
