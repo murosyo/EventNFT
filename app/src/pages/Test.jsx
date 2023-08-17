@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "./../config/firebase";
 import { ig } from "./../config/imageGeneration";
+import { nft } from "./../config/toNFT";
 
 
 const Test = () => {
@@ -44,6 +45,17 @@ const Test = () => {
     });
   }
 
+  const handleClick5 = async () => {
+    await axios.get("/api/nftgarden", { headers: nft.headers })
+    .then((res) => {
+      console.log("handleClick5: success");
+      console.log(res.data);
+    }).catch((err) => {
+      console.log("handleClick5: error");
+      console.log(err);
+    });
+  }
+
   useEffect(() => {
     console.log("useEffect");
   }, []);
@@ -56,6 +68,7 @@ const Test = () => {
         <button onClick={handleClick2} className='mx-auto w-28 btn'>データ追加</button>
         <button onClick={handleClick3} className='mx-auto w-28 btn'>データ送信</button>
         <button onClick={handleClick4} className='mx-auto w-28 btn'>api接続(ig)</button>
+        <button onClick={handleClick5} className='mx-auto w-28 btn'>api接続(img)</button>
       </div>
     </div>
   );
