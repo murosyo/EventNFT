@@ -5,6 +5,7 @@ import { db } from "../../config/firebase.js";
 
 
 const NewEvent = () => {
+  let now = new Date();
   const [event, setEvent] = useState({
     title: '',
     'date-start': '',
@@ -14,6 +15,8 @@ const NewEvent = () => {
     userId: '',
     status: 'collecting_comments',
     image: '/commingsoon.jpg',
+    userId: '',
+    created_at: now.getTime()
   });
 
   const navigate = useNavigate();
