@@ -46,11 +46,13 @@ const Test = () => {
   }
 
   const handleClick5 = async () => {
-    await axios.get("/api", { headers: nft.headers })
+    await axios.get("/api/nftgarden", { headers: nft.headers })
     .then((res) => {
       console.log("handleClick5: success");
+      console.log(res.data);
     }).catch((err) => {
       console.log("handleClick5: error");
+      console.log(err);
     });
   }
 
