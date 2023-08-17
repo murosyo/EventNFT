@@ -1,6 +1,6 @@
-import { doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { db } from "./../../config/firebase";
 
 
@@ -12,18 +12,28 @@ const Comment = () => {
     comment: '',
   });
   const eventRef = doc(db, "events", eventId);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const {name, value} = e.target;
     setComment({ ...comment, [name]: value });
   };
 
-  const handleSubmit = () => {
-    console.log(comment);
+  const handleSubmit = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "comments"), comment);
+      console.log("Document written with ID: ", docRef.id);
+      navigate("/event/" + docRef.id);
+      return docRef;
+    } catch (err) {
+      console.error("Error adding document: ", err);
+      return err;
+    };
   };
 
   useEffect(() => {
     const getEvent = async () => {
+      console.log("GetEvent");
       try {
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
@@ -48,7 +58,7 @@ const Comment = () => {
           <p>コメント</p>
             <textarea type='textarea' name='comment' onChange={handleChange} className='textarea' />
         </div>
-        <button className='mx-auto mt-2 w-full btn' onChange={handleSubmit}>投稿する</button>
+        <button className='mx-auto mt-2 w-full btn' onClick={handleSubmit}>投稿する</button>
       </form>
     </div>
   );
