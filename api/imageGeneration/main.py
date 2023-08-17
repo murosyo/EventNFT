@@ -6,6 +6,7 @@ from deepl import translate_en_to_ja, translate_ja_to_en
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Rake import Rake
+from Rake_en import Rake_en
 from starlette.middleware.cors import CORSMiddleware
 from summerize import summerize
 
@@ -82,29 +83,41 @@ async def root(data: Data):
     # print(summary_text)
 
     # 英語から日本語に翻訳
-    trans_text = translate_en_to_ja(summary_text)
-    # 改行コード（\n）の除去
-    trans_text = re.sub(r'\n', '', trans_text)
-    # print(trans_text)
+    # trans_text = translate_en_to_ja(summary_text)
+    # # 改行コード（\n）の除去
+    # trans_text = re.sub(r'\n', '', trans_text)
+    # # print(trans_text)
 
+    # 改行コード（\n）の除去
+    summary_text = re.sub(r'\n', '', summary_text)
     # 翻訳したテキストをRakeで処理し、キーワードを抽出
-    rake = Rake(trans_text)
-    keywords = rake.extract_phrases(trans_text)
+    # rake = Rake(trans_text)
+    # keywords = rake.extract_phrases(trans_text)
+    rake = Rake_en(summary_text)
+    keywords = rake.extract_phrases(summary_text)
     # keywords.append("水彩画") # 水彩画仕様に変更
-    keywords = [keyword.replace(' ', '') for keyword in keywords]
-    # print(keywords)
+    # keywords = [keyword.replace(' ', '') for keyword in keywords]
+    print(keywords)
     # print(type(keywords))
     if len(event_keywords) > 0:
         for i in range(len(event_keywords)):
             keywords.append(event_keywords[i])
     keywords.append(event_location)
     # print(keywords)
+    keywords = set(keywords)
     keywords = " ".join(keywords)
     keywords = keywords.split()
-    keywords = set(keywords)
+    # keywords = set(keywords)
     keywords = list(keywords)
-    keywords = " ".join(keywords)
-    # print(keywords)
+    unique_word = []
+    seen_word = set()
+    for keyword in keywords:
+        if keyword not in seen_word:
+            unique_word.append(keyword)
+            seen_word.add(keyword)
+    keywords = " ".join(unique_word)
+    # keywords = " ".join(keywords)
+    print(keywords)
 
     # キーワードから画像を生成
     Image_URL = create_image_from_text(keywords)
