@@ -36,8 +36,12 @@ const CollectComment = () => {
       ] //最大5つ
     };
     await axios.post(ig.baseURL + "/", data, { headers: ig.headers })
-      .then((urls) => {
-        setEvent({...event, status:"generated_image", image: urls[0]});
+      .then(async (urls) => {
+        const eventRef = db.collection('events').doc(eventId);
+        await eventRef.update({
+          status: "generated_image",
+          image: urls[0],
+        })
         navigate("/event/" + eventId);
       }).catch((err) => {
         console.log(err);
