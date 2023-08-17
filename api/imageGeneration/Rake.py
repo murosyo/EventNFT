@@ -75,7 +75,7 @@ class Rake(KeywordExtractor):
         self.rake.extract_keywords_from_text(tokens)
         scrs_kwds = self.rake.get_ranked_phrases_with_scores()
 
-        if len(scrs_kwds) > 1:
+        if len(scrs_kwds) >= 1:
             # 関連スコアが4.0以上の単語群のみを返す
             return [x[1] for x in scrs_kwds if x[0] >= 4.0]
         else:
