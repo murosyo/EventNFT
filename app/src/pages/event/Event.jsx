@@ -8,23 +8,24 @@ const Event = () => {
   const {eventId} = useParams();
   const [event, setEvent] = useState([]);
   const [comments, setComments] = useState([]);
-  const eventRef = doc(db, "events", eventId);
 
   useEffect(() => {
     const getEvent = async () => {
       console.log("GetEvent");
       try {
+        const eventRef = doc(db, "events", eventId);
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
+        console.log(event);
       } catch(err) {
         console.log(err);
       };
     };
     const getComments = async () => {
       console.log("GetCommentList");
-      const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
       try {
+        const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
         const data = await getDocs(commentsRef);
         const commentList = data.docs.map((doc) => ({
           ...doc.data(),
@@ -36,7 +37,7 @@ const Event = () => {
     };
     getEvent();
     getComments();
-  }, []);
+  }, [eventId]);
 
   return (
     <div className='mx-auto w-5/6 space-y-10'>
@@ -45,7 +46,8 @@ const Event = () => {
         <img src={event.image} alt="NFT画像" className='mx-auto w-64 h-64' />
       </div>
       <div className='text-left space-y-1'>
-        <p><strong>日付</strong>：{event.date}</p>
+        <p><strong>開始日時</strong>：{event['date-start']}</p>
+        <p><strong>終了日時</strong>：{event['date-end']}</p>
         <p><strong>場所</strong>：{event.location}</p>
         <p><strong>概要</strong>：{event.details}</p>
       </div>
