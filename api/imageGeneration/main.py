@@ -18,7 +18,7 @@ class Event(BaseModel):
 
 class Data(BaseModel):
     event: Event
-    comments: str = None
+    comments: List[str] = []
     keywords: List[str] = []
 
 
@@ -31,7 +31,8 @@ async def root(data: Data):
     # f.close()
 
     # print(data)
-
+    all_text = "".join(data.comments)
+    all_text = re.sub(r'\n', '', all_text)
     all_text = data.comments
     event_title = data.event.title
     event_location = data.event.location
