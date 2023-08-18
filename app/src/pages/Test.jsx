@@ -1,17 +1,18 @@
 import axios from 'axios';
 import { addDoc, collection } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from "./../config/firebase";
+import { db, storage } from "./../config/firebase";
 import { ig } from "./../config/imageGeneration";
 import { nft } from "./../config/toNFT";
-
 
 const Test = () => {
   const [data, setData] = useState({
     text1: 'test1',
     text2: ''
   });
+  const [imagePath, setImagePath] = useState('');
   const navigate = useNavigate();
 
   const handleClick1 = () => {
@@ -72,8 +73,33 @@ const Test = () => {
     });
   };
 
+  const handleClick7 = () => {
+    const url = "https://2.bp.blogspot.com/-NSxv59ZcJfA/VpjCbp0555I/AAAAAAAA3AM/jVD3WGXyRlU/s800/group_kids.png";
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => new File([blob], 'image.jpg'))
+      .then( async (file) => {
+        console.log(file);
+        const storageRef = ref(storage, 'test.png');
+        await uploadBytes(storageRef, file).then((snapshot) => {
+          console.log('Uploaded a blob or file!');
+        });
+      });
+  };
+
   useEffect(() => {
     console.log("useEffect");
+    const storageRef = ref(storage, "nft/2.png");
+    const gsRef = ref(
+      storage,
+      'gs://' + storageRef.bucket + '/' + storageRef.fullPath
+    );
+    getDownloadURL(gsRef)
+      .then((url) => {
+        console.log(url);
+        setImagePath(url);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -86,6 +112,8 @@ const Test = () => {
         <button onClick={handleClick4} className='mx-auto w-28 btn'>api接続(ig)</button>
         <button onClick={handleClick5} className='mx-auto w-28 btn'>api接続(nft生成)</button>
         <button onClick={handleClick6} className='mx-auto w-28 btn'>api接続(nft配布)</button>
+        <button onClick={handleClick7} className='mx-auto w-28 btn'>storage</button>
+        <img src={imagePath} />
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { db } from "./../../config/firebase";
+import { db, storage } from "./../../config/firebase";
 import { ig } from "./../../config/imageGeneration";
 import { nft } from "./../../config/toNFT";
-
 
 const CollectComment = () => {
   const {eventId} = useParams();
@@ -32,6 +32,7 @@ const CollectComment = () => {
       "keywords": [
       ] //最大5つ
     };
+    console.log(body);
 
     // const urls = await axios.post(ig.baseURL + "/test", body, { headers: ig.headers })
     const urls = await axios.post(ig.baseURL + "/", body, { headers: ig.headers })
@@ -53,7 +54,7 @@ const CollectComment = () => {
         image: url,
       }};
 
-    // await axios.post("/api/createnft", body, { headers: nft.headers })
+    // const nft_gdn = await axios.post("/api/createnft", body, { headers: nft.headers })
     const nft_gdn = await axios.post("/api/test/createnft", body, { headers: nft.headers })
     .then((res) => {
       console.log(res.data);
@@ -64,17 +65,38 @@ const CollectComment = () => {
     return (nft_gdn);
   };
 
+  const uploadImage = async (url) => {
+    const storage_url = fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => new File([blob], 'nft/' + eventId + '.png'))
+      .then( async(file) => {
+        console.log(file);
+        const storageRef = ref(storage, 'nft/' + eventId + '.png');
+        const gsRef = ref(
+          storage,
+          'gs://' + storageRef.bucket + '/' + storageRef.fullPath
+        );
+        const snapshot = await uploadBytes(storageRef, file)
+        const storage_url = await getDownloadURL(gsRef);
+        return (storage_url);
+      });
+    return (storage_url);
+  };
+
   const handleConfirm = async () => {
     const confirm = window.confirm("コメントを締め切り、画像を生成します。\n本当によろしいですか？");
     if (confirm) {
-      const url = await createImage();
-      const nft = await toNFTimage(url);
-      const eventRef = doc(db, "events", eventId);
       try {
+        // const url = await createImage();
+        const url = "https://2.bp.blogspot.com/-NSxv59ZcJfA/VpjCbp0555I/AAAAAAAA3AM/jVD3WGXyRlU/s800/group_kids.png";
+        const storage_url = await uploadImage(url);
+        const nft = await toNFTimage(storage_url);
+        const eventRef = doc(db, "events", eventId);
+        console.log(storage_url);
         await setDoc(eventRef, event);
         await updateDoc(eventRef, {
           status: "generated_image",
-          image: url,
+          image: storage_url,
           contract_address: nft.contract_address
         });
         navigate("/event/" + eventId);

@@ -30,7 +30,7 @@ app.add_middleware(
 class Event(BaseModel):
     title: str = None
     location: str = None
-    detail: str = None
+    details: str = None
 
 
 class Data(BaseModel):
@@ -58,7 +58,7 @@ async def root(data: Data):
     all_text = re.sub(r'\n', '', all_text)
     event_title = data.event.title
     event_location = data.event.location
-    event_detail = data.event.detail
+    event_detail = data.event.details
     event_keywords = data.keywords
     # print(all_text)
     # print(event_title)
@@ -79,7 +79,10 @@ async def root(data: Data):
         all_text = all_text
 
     # 文章の要約
-    summary_text = summerize(all_text)
+    if all_text.count(' ') > 40:
+        summary_text = summerize(all_text)
+    else:
+        summary_text = all_text
     # print(summary_text)
 
     # 英語から日本語に翻訳
@@ -95,7 +98,7 @@ async def root(data: Data):
     # keywords = rake.extract_phrases(trans_text)
     rake = Rake_en(summary_text)
     keywords = rake.extract_phrases(summary_text)
-    # keywords.append("水彩画") # 水彩画仕様に変更
+    keywords.append("oil-art painting.")  # 水彩画仕様に変更
     # keywords = [keyword.replace(' ', '') for keyword in keywords]
     print(keywords)
     # print(type(keywords))

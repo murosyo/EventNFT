@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "await": "^0.2.6",
     "axios": "^1.4.0",
+    "blob": "^0.1.0",
     "firebase": "^10.1.0",
     "firebase-tools": "^12.4.8",
     "http-proxy-middleware": "^2.0.6",

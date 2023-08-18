@@ -16,7 +16,6 @@ const NewEvent = () => {
     status: 'collecting_comments',
     image: '/commingsoon.jpg',
     contract_address: '',
-    userId: '',
     created_at: now.getTime()
   });
 
