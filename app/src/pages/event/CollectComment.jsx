@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from "./../../config/firebase";
@@ -31,17 +31,16 @@ const CollectComment = () => {
       "event": event,
       "comments": commentList,
       "keywords": [
-        "ccc",
-        "ddd",
       ] //最大5つ
     };
     await axios.post(ig.baseURL + "/", data, { headers: ig.headers })
       .then(async (urls) => {
-        const eventRef = db.collection('events').doc(eventId);
-        await eventRef.update({
+        console.log(urls.data);
+        const eventRef = doc(db, "events", eventId);
+        await updateDoc(eventRef, {
           status: "generated_image",
           image: urls[0],
-        })
+        });
         navigate("/event/" + eventId);
       }).catch((err) => {
         console.log(err);
