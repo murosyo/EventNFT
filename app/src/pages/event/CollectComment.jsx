@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from "./../../config/firebase";
 import { ig } from "./../../config/imageGeneration";
+import { nft } from "./../../config/toNFT";
 
 
 const CollectComment = () => {
@@ -13,38 +14,74 @@ const CollectComment = () => {
   const QRcode = "https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fevent-nft-memories.vercel.app%2Fevent%2F" + eventId + "%2Fcomment&size=100x100";
   const navigate = useNavigate();
 
-  const handleConfirm = () => {
-    const confirm = window.confirm("コメントを締め切り、画像を生成します。\n本当によろしいですか？");
-    if (confirm) {
-      createImage();
-    };
-  };
-
   const createImage = async () => {
-    var commentList = [];
+    const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
+    const data = await getDocs(commentsRef);
+    const commentList = data.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    setComments(commentList);
+    var commentData = [];
     comments.map((obj) => {
-      commentList.push(obj.comment);
-      return (obj.comment)
+      commentData.push(obj.comment);
+      return (obj.comment);
     });
-    console.log(commentList);
-    const data = {
+    const body = {
       "event": event,
-      "comments": commentList,
+      "comments": commentData,
       "keywords": [
       ] //最大5つ
     };
-    await axios.post(ig.baseURL + "/", data, { headers: ig.headers })
+
+    // const urls = await axios.post(ig.baseURL + "/test", body, { headers: ig.headers })
+    const urls = await axios.post(ig.baseURL + "/", body, { headers: ig.headers })
       .then(async (urls) => {
         console.log(urls.data);
-        const eventRef = doc(db, "events", eventId);
-        await updateDoc(eventRef, {
-          status: "generated_image",
-          image: urls[0],
-        });
-        navigate("/event/" + eventId);
+        return urls.data;
       }).catch((err) => {
         console.log(err);
       });
+    return (urls[0]);
+  };
+
+  const toNFTimage = async (url) => {
+    const body = {
+      wallet_address: "0x155418c24f57277b4d69d226c6b37e43a78c5d15",
+      event: {
+        title: event.title,
+        details: event.details,
+        image: url,
+      }};
+
+    // await axios.post("/api/createnft", body, { headers: nft.headers })
+    const nft_gdn = await axios.post("/api/test/createnft", body, { headers: nft.headers })
+    .then((res) => {
+      console.log(res.data);
+      return (res.data);
+    }).catch((err) => {
+      console.log(err);
+    });
+    return (nft_gdn);
+  };
+
+  const handleConfirm = async () => {
+    const confirm = window.confirm("コメントを締め切り、画像を生成します。\n本当によろしいですか？");
+    if (confirm) {
+      const url = await createImage();
+      const nft = await toNFTimage(url);
+      const eventRef = doc(db, "events", eventId);
+      try {
+        await setDoc(eventRef, event);
+        await updateDoc(eventRef, {
+          status: "generated_image",
+          image: url,
+          contract_address: nft.contract_address
+        });
+        navigate("/event/" + eventId);
+      } catch(err) {
+        console.log(err);
+      };
+    }
   };
 
   useEffect(() => {
@@ -55,25 +92,15 @@ const CollectComment = () => {
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
+        console.log(event);
+        if (event.status === "generated_image") {
+          navigate("/event/" + eventId);
+        }
       } catch(err) {
         console.log(err);
       }
-    }
-    const getComments = async () => {
-      console.log("GetCommentList");
-      try {
-        const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
-        const data = await getDocs(commentsRef);
-        const commentList = data.docs.map((doc) => ({
-          ...doc.data(),
-        }));
-        setComments(commentList);
-      } catch (err) {
-        console.error(err);
-      };
     };
     getEvent();
-    getComments();
   }, [eventId]);
 
   return (

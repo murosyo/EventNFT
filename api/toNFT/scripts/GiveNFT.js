@@ -15,7 +15,8 @@ const GiveNFT = async (data) => {
             "key": "image",
             "url": data.event.image
         }]
-  }]};
+    }]
+  };
   const response = await axios.post(
     nftgarden.baseURL + '/createnfttrans', body, { headers: nftgarden.headers1 })
     .then((res) => {
