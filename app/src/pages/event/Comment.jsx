@@ -39,6 +39,10 @@ const Comment = () => {
         const eventDoc = await getDoc(eventRef);
         const event = eventDoc.data();
         setEvent(event);
+        console.log(event);
+        if (event.status === "generated_image") {
+          navigate("/event/" + eventId);
+        }    
       } catch(err) {
         console.log(err);
       };

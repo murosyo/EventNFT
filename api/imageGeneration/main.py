@@ -40,7 +40,7 @@ class Data(BaseModel):
 
 
 @app.get("/")
-def test():
+def root():
     return "success"
 
 
@@ -134,6 +134,16 @@ async def root(data: Data):
 
     # 画像のリンクを返すかテスト
     return urls
+
+
+@app.post("/test")
+def test():
+    return [
+        "https://oaidalleapiprodscus.blob.core.windows.net/private/org-L5rKMX1oku2hAoH7ybZp9G4o/user-LJ9poxHXWK1B3skbqkStfsO9/img-oVnqSSnb1kqTpTJN4x7Ik0sn.png?st=2023-08-18T05%3A09%3A36Z&se=2023-08-18T07%3A09%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-08-17T17%3A54%3A00Z&ske=2023-08-18T17%3A54%3A00Z&sks=b&skv=2021-08-06&sig=G2/BwLsKHmkWIpM8YmdNIaXExaFVioUewS6IMx6nb9U%3D",
+        "https://oaidalleapiprodscus.blob.core.windows.net/private/org-L5rKMX1oku2hAoH7ybZp9G4o/user-LJ9poxHXWK1B3skbqkStfsO9/img-q9xnfdMRwbc5EeEHiX55VWGf.png?st=2023-08-18T05%3A09%3A35Z&se=2023-08-18T07%3A09%3A35Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-08-17T17%3A54%3A00Z&ske=2023-08-18T17%3A54%3A00Z&sks=b&skv=2021-08-06&sig=hVYEW9%2BUHlTjzuxtMV6UtNKWWODdH7CCuAmciV6GSxI%3D",
+        "https://oaidalleapiprodscus.blob.core.windows.net/private/org-L5rKMX1oku2hAoH7ybZp9G4o/user-LJ9poxHXWK1B3skbqkStfsO9/img-AolpqZ6I07bjGRGPGRTQBcTo.png?st=2023-08-18T05%3A09%3A35Z&se=2023-08-18T07%3A09%3A35Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-08-17T17%3A54%3A00Z&ske=2023-08-18T17%3A54%3A00Z&sks=b&skv=2021-08-06&sig=E1X92ykM1u70mD8t2/786urct1JOZcqeBFvOiUSmGDY%3D",
+        "https://oaidalleapiprodscus.blob.core.windows.net/private/org-L5rKMX1oku2hAoH7ybZp9G4o/user-LJ9poxHXWK1B3skbqkStfsO9/img-cnaZH2SWxeQWoEQ8nNrMGIzG.png?st=2023-08-18T05%3A09%3A35Z&se=2023-08-18T07%3A09%3A35Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-08-17T17%3A54%3A00Z&ske=2023-08-18T17%3A54%3A00Z&sks=b&skv=2021-08-06&sig=YdxorVvoPMVrFcJ/ass/WoNiwhYPjtnHJfabuPaPsVM%3D"
+    ]
 
 
 def contains_japanese(text):
