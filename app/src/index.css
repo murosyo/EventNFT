@@ -5,6 +5,10 @@
   @apply py-3 px-4 bg-slate-900 hover:bg-slate-500 text-slate-50 rounded;
 }
 
+.btn-disabled {
+  @apply py-3 px-4 bg-slate-400 text-slate-50 rounded;
+}
+
 .form {
   @apply mx-auto w-60 space-y-4 flex flex-col;
 }

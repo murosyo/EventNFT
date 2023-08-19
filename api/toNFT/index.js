@@ -62,14 +62,6 @@ app.post('/api/givenft', async (req, res, next) => {
 });
 
 app.post('/api/test/givenft', async (req, res, next) => {
-  // const data = {
-  //   contract_address: "0x60C013A0CACB851ee51fF1A5A3A43ee9bD2D6194",
-  //   receiver_wallet_address: "0x02a28a96C7b5bD226397fE872B7657e6498e151a",
-  //   event: {
-  //     title: "Nagoya Blockchain Hackathon1",
-  //     details: "details",
-  //     image: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-  //   }};
   const data = req.body;
   console.log("request:", data);
   try {

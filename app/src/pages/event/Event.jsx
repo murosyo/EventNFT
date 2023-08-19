@@ -44,6 +44,7 @@ const Event = () => {
       <div className='mx-auto mb-8 w-64 h-64'>
         <img src={event.image} alt="NFT画像" className='mx-auto w-64 h-64' />
       </div>
+      <a href={'/event/' + eventId + '/givenft'} className='mx-auto mt-2 w-full btn'>NFTを受け取る</a>
       <div className='text-left space-y-1'>
         <p><strong>開始日時</strong>：{event['date-start']}</p>
         <p><strong>終了日時</strong>：{event['date-end']}</p>
