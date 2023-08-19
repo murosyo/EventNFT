@@ -7,6 +7,7 @@ import {
   Comment,
   Event,
   EventList,
+  GiveNFT,
   Login,
   NewEvent,
   NewUser,
@@ -31,6 +32,7 @@ function App() {
           <Route path="/event/:eventId" element={<Event />} />
           <Route path="/event/:eventId/collectcomments" element={<CollectComment />} />
           <Route path="/event/:eventId/comment" element={<Comment />} />
+          <Route path="/event/:eventId/givenft" element={<GiveNFT />} />
         </Routes>
         </BrowserRouter>
       </div>

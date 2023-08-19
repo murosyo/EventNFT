@@ -91,6 +91,11 @@ const Header = () => {
                 </a>
               </li>
               <li>
+                <a href="/event/2/givenft" className="py-2 inline-block">
+                  NFT受け取り
+                </a>
+              </li>
+              <li>
                 <a href="/test" className="py-2 inline-block">
                   テスト
                 </a>
