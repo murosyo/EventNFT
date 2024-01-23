@@ -13,38 +13,7 @@ const CollectComment = () => {
   const [comments, setComments] = useState([]);
   const QRcode = "https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fevent-nft-memories.vercel.app%2Fevent%2F" + eventId + "%2Fcomment&size=100x100";
   const navigate = useNavigate();
-
-  const createImage = async () => {
-    const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
-    const data = await getDocs(commentsRef);
-    const commentList = data.docs.map((doc) => ({
-      ...doc.data(),
-    }));
-    setComments(commentList);
-    var commentData = [];
-    comments.map((obj) => {
-      commentData.push(obj.comment);
-      return (obj.comment);
-    });
-    const body = {
-      "event": event,
-      "comments": commentData,
-      "keywords": [
-      ] //最大5つ
-    };
-    console.log(body);
-
-    // const urls = await axios.post(ig.baseURL + "/test", body, { headers: ig.headers })
-    const urls = await axios.post(ig.baseURL + "/", body, { headers: ig.headers })
-      .then(async (urls) => {
-        console.log(urls.data);
-        return urls.data;
-      }).catch((err) => {
-        console.log(err);
-      });
-    return (urls[0]);
-  };
-
+  
   const toNFTimage = async (url) => {
     const body = {
       wallet_address: "0x155418c24f57277b4d69d226c6b37e43a78c5d15",
@@ -122,7 +91,40 @@ const CollectComment = () => {
         console.log(err);
       }
     };
+
+    const getComments = async () => {
+      const commentsRef = query(collection(db, "comments"), where("eventId", "==", eventId));
+      const data = await getDocs(commentsRef);
+      const commentList = data.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+      setComments(commentList);
+      var commentData = [];
+      comments.map((obj) => {
+        commentData.push(obj.comment);
+        return (obj.comment);
+      });
+      const body = {
+        "event": event,
+        "comments": commentData,
+        "keywords": [
+        ] //最大5つ
+      };
+      console.log(body);
+  
+      // const urls = await axios.post(ig.baseURL + "/test", body, { headers: ig.headers })
+      const urls = await axios.post(ig.baseURL + "/", body, { headers: ig.headers })
+        .then(async (urls) => {
+          console.log(urls.data);
+          return urls.data;
+        }).catch((err) => {
+          console.log(err);
+        });
+      // return (urls[0]);
+    };
+
     getEvent();
+    getComments();
   }, [eventId]);
 
   return (
