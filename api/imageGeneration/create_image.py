@@ -1,8 +1,8 @@
 import os
 import openai
-# openai.organization = "org-RXnF9tUb9UuKoRoXH1LGUdO3"
-openai.api_key = "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"
-# openai.api_key = os.getenv("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")
+
+openai.api_key = "###"
+
 def create_image_from_text(text):
     response = openai.Image.create(
         prompt = text, # 画像生成するためのテキスト
